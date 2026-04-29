@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASHER</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --text: #111827;
+      --muted: #6b7280;
+      --card: rgba(255, 255, 255, 0.78);
+      --line: rgba(17, 24, 39, 0.1);
+      --primary: #5b6cff;
+      --primary-dark: #3344dd;
+      --accent: #00c2a8;
+      --shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+      --radius: 26px;
+    }
+
+    body.dark {
+      --bg: #070b17;
+      --text: #f8fafc;
+      --muted: #a7b0c0;
+      --card: rgba(15, 23, 42, 0.72);
+      --line: rgba(255, 255, 255, 0.12);
+      --primary: #8b96ff;
+      --primary-dark: #6673ff;
+      --accent: #36e5ca;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(91, 108, 255, 0.18), transparent 30%),
+        radial-gradient(circle at 90% 20%, rgba(0, 194, 168, 0.14), transparent 28%),
+        var(--bg);
+      line-height: 1.7;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      backdrop-filter: blur(18px);
+      background: rgba(248, 250, 252, 0.72);
+      border-bottom: 1px solid var(--line);
+    }
+
+    body.dark header {
+      background: rgba(7, 11, 23, 0.72);
+    }
+
+    nav {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-weight: 900;
+      font-size: 1.45rem;
+      letter-spacing: 0.12em;
+    }
+
+    .logo span {
+      color: var(--primary);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .theme-btn,
+    .menu-btn {
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 9px 13px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .menu-btn {
+      display: none;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 120px 0 70px;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 54px;
+      align-items: center;
+    }
+
+    .tag {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--card);
+      box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(3.2rem, 8vw, 7.6rem);
+      line-height: 0.9;
+      letter-spacing: -0.08em;
+      margin-bottom: 22px;
+    }
+
+    .hero h1 span {
+      color: var(--primary);
+    }
+
+    .hero p {
+      font-size: 1.12rem;
+      color: var(--muted);
+      max-width: 620px;
+      margin-bottom: 32px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 13px 20px;
+      font-weight: 800;
+      border: 1px solid var(--line);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn.primary {
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 18px 40px rgba(91, 108, 255, 0.28);
+    }
+
+    .btn.ghost {
+      background: var(--card);
+      color: var(--text);
+    }
+
+    .orb-wrap {
+      position: relative;
+      height: 470px;
+      display: grid;
+      place-items: center;
+    }
+
+    .orb {
+      width: min(390px, 80vw);
+      aspect-ratio: 1;
+      border-radius: 42% 58% 63% 37% / 45% 41% 59% 55%;
+      background:
+        linear-gradient(135deg, rgba(91, 108, 255, 0.95), rgba(0, 194, 168, 0.84)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cpath d='M0 60h120M60 0v120' stroke='rgba(255,255,255,.25)' stroke-width='1'/%3E%3C/svg%3E");
+      box-shadow: var(--shadow);
+      animation: float 5s ease-in-out infinite, morph 9s ease-in-out infinite;
+    }
+
+    .orb-text {
+      position: absolute;
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      color: white;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-18px); }
+    }
+
+    @keyframes morph {
+      0%, 100% { border-radius: 42% 58% 63% 37% / 45% 41% 59% 55%; }
+      50% { border-radius: 58% 42% 41% 59% / 54% 61% 39% 46%; }
+    }
+
+    section {
+      padding: 92px 0;
+    }
+
+    .section-title {
+      margin-bottom: 38px;
+    }
+
+    .section-title small {
+      display: inline-block;
+      color: var(--primary);
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      margin-bottom: 8px;
+    }
+
+    .section-title h2 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: -0.05em;
+      line-height: 1.12;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      margin-top: 12px;
+      max-width: 760px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: 0 10px 34px rgba(15, 23, 42, 0.06);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(91, 108, 255, 0.45);
+    }
+
+    .icon {
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(91, 108, 255, 0.15), rgba(0, 194, 168, 0.15));
+      font-size: 1.6rem;
+      margin-bottom: 18px;
+    }
+
+    .card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 10px;
+    }
+
+    .card p,
+    .card li {
+      color: var(--muted);
+    }
+
+    .card ul {
+      padding-left: 18px;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 16px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 20px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+    }
+
+    .year {
+      color: var(--primary);
+      font-weight: 950;
+      font-size: 1.25rem;
+    }
+
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .portfolio {
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      color: white;
+      padding: 22px;
+      border-radius: var(--radius);
+      background: linear-gradient(150deg, rgba(91, 108, 255, 0.92), rgba(0, 194, 168, 0.88));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .portfolio::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.22), transparent 35%);
+      transform: translate(20%, -20%);
+    }
+
+    .portfolio h3,
+    .portfolio p {
+      position: relative;
+    }
+
+    .portfolio p {
+      opacity: 0.88;
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
+
+    .message-box {
+      display: grid;
+      grid-template-columns: 0.75fr 1.25fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .profile {
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 360px;
+      box-shadow: var(--shadow);
+    }
+
+    .profile strong {
+      font-size: 3rem;
+      line-height: 1;
+    }
+
+    .quote {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 34px;
+    }
+
+    .quote h3 {
+      font-size: 1.5rem;
+      margin-bottom: 14px;
+    }
+
+    .quote p {
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .contact {
+      text-align: center;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 10px);
+      padding: 54px 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .contact h2 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      letter-spacing: -0.06em;
+      margin-bottom: 12px;
+    }
+
+    .contact p {
+      color: var(--muted);
+      margin-bottom: 26px;
+    }
+
+    footer {
+      padding: 32px 0 52px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.92rem;
+    }
+
+    .hidden-egg {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      opacity: 0.18;
+      font-size: 0.8rem;
+      user-select: none;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 26px;
+      transform: translateX(-50%) translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      background: var(--text);
+      color: var(--bg);
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 800;
+      transition: all 0.25s ease;
+      z-index: 99;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 860px) {
+      .menu-btn {
+        display: inline-flex;
+      }
+
+      .nav-links {
+        position: absolute;
+        top: 72px;
+        left: 20px;
+        right: 20px;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .hero-grid,
+      .message-box {
+        grid-template-columns: 1fr;
+      }
+
+      .orb-wrap {
+        height: 360px;
+      }
+
+      .cards,
+      .portfolio-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <a href="#home" class="logo">A<span>S</span>HER</a>
+        <div class="nav-links" id="navLinks">
+          <a href="#about">About</a>
+          <a href="#activities">Activities</a>
+          <a href="#works">Works</a>
+          <a href="#message">Message</a>
+          <a href="#contact">Contact</a>
+          <button class="theme-btn" id="themeBtn" type="button">Dark</button>
+        </div>
+        <button class="menu-btn" id="menuBtn" type="button">Menu</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div>
+          <div class="tag">✦ Creative Science & Technology Club</div>
+          <h1>WE ARE <span>ASHER</span></h1>
+          <p>
+            ASHER는 과학, 기술, 디자인, 문제 해결을 연결하여 아이디어를 실제 결과물로 구현하는 창의 융합 동아리입니다.
+            배우고, 만들고, 공유하며 함께 성장하는 것을 목표로 합니다.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#activities">활동 살펴보기</a>
+            <a class="btn ghost" href="#contact">지원 문의하기</a>
+          </div>
+        </div>
+        <div class="orb-wrap" aria-label="ASHER visual object">
+          <div class="orb"></div>
+          <div class="orb-text">ASHER</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="container">
+        <div class="section-title">
+          <small>ABOUT</small>
+          <h2>새로운 생각이 실제 작품이 되는 공간</h2>
+          <p>
+            ASHER는 단순히 지식을 배우는 데서 멈추지 않고, 직접 기획하고 제작하고 발표하는 과정을 중요하게 생각합니다.
+            각자의 관심사를 기반으로 팀 프로젝트, 연구형 활동, 전시 및 행사 운영을 진행합니다.
+          </p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <div class="icon">💡</div>
+            <h3>아이디어 기획</h3>
+            <p>생활 속 문제를 발견하고, 과학적·기술적 해결 방법을 설계합니다.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🛠️</div>
+            <h3>제작과 실험</h3>
+            <p>웹, 데이터, 하드웨어, 실험 설계를 활용해 직접 결과물을 만듭니다.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🚀</div>
+            <h3>공유와 확장</h3>
+            <p>발표, 전시, 부스 운영을 통해 활동 결과를 더 많은 사람과 나눕니다.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="activities">
+      <div class="container">
+        <div class="section-title">
+          <small>ACTIVITIES</small>
+          <h2>2026 ASHER 활동 계획</h2>
+          <p>아래 내용은 필요에 맞게 바꿔 쓸 수 있는 예시입니다. 실제 동아리 활동에 맞춰 문구만 수정하면 됩니다.</p>
+        </div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="year">01</div>
+            <div>
+              <h3>기초 워크숍</h3>
+              <p>HTML, CSS, JavaScript, 데이터 처리, 실험 설계 등 프로젝트에 필요한 기본기를 학습합니다.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="year">02</div>
+            <div>
+              <h3>팀 프로젝트</h3>
+              <p>관심 분야별 팀을 구성하여 웹 서비스, 연구 실험, 시각화, 자동화 도구 등을 제작합니다.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="year">03</div>
+            <div>
+              <h3>행사 및 부스 운영</h3>
+              <p>교내외 행사에서 체험형 콘텐츠를 기획하고, 동아리의 결과물을 전시합니다.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="year">04</div>
+            <div>
+              <h3>포트폴리오 제작</h3>
+              <p>1년 동안 만든 작품과 활동 기록을 정리하여 개인 및 동아리 포트폴리오로 남깁니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="works">
+      <div class="container">
+        <div class="section-title">
+          <small>WORKS</small>
+          <h2>ASHER 포트폴리오</h2>
+          <p>카드를 클릭하면 간단한 설명이 바뀝니다. 실제 수상, 제작물, 프로젝트 기록으로 교체해 사용하세요.</p>
+        </div>
+        <div class="portfolio-grid">
+          <article class="portfolio" data-work="실생활 문제를 해결하는 미니 웹앱을 제작했습니다.">
+            <h3>Web App</h3>
+            <p>웹 서비스 제작</p>
+          </article>
+          <article class="portfolio" data-work="데이터를 수집하고 그래프로 시각화하는 활동을 진행했습니다.">
+            <h3>Data Lab</h3>
+            <p>데이터 분석</p>
+          </article>
+          <article class="portfolio" data-work="센서와 보드를 활용해 작동하는 프로토타입을 만들었습니다.">
+            <h3>Maker</h3>
+            <p>하드웨어 제작</p>
+          </article>
+          <article class="portfolio" data-work="체험형 부스를 기획하여 방문객이 직접 참여하도록 구성했습니다.">
+            <h3>Festival</h3>
+            <p>행사 운영</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="message">
+      <div class="container">
+        <div class="section-title">
+          <small>CLOSING REMARKS</small>
+          <h2>부장의 말</h2>
+        </div>
+        <div class="message-box">
+          <aside class="profile">
+            <div>
+              <strong>A</strong>
+              <p>ASHER President</p>
+            </div>
+            <p>“좋은 아이디어는 혼자 있을 때보다 함께 만들 때 더 멀리 갑니다.”</p>
+          </aside>
+          <article class="quote">
+            <h3>안녕하세요, ASHER에 관심을 가져주셔서 감사합니다.</h3>
+            <p>
+              ASHER는 새로운 것을 배우는 사람, 배운 것을 직접 만들어보고 싶은 사람, 그리고 자신의 관심사를 프로젝트로 발전시키고 싶은 사람을 환영합니다.
+            </p>
+            <p>
+              처음부터 완벽할 필요는 없습니다. 중요한 것은 호기심과 꾸준히 시도하는 태도입니다. ASHER에서 여러분의 아이디어가 실제 결과물이 되는 경험을 함께 만들어가면 좋겠습니다.
+            </p>
+            <p>
+              전공이나 경험에 관계없이 창의적인 활동에 관심이 있다면 편하게 지원해 주세요.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container">
+        <div class="contact">
+          <h2>JOIN ASHER</h2>
+          <p>지원 및 문의는 아래 연락처로 부탁드립니다.</p>
+          <div class="hero-actions" style="justify-content:center">
+            <a class="btn primary" href="mailto:asher@example.com">asher@example.com</a>
+            <a class="btn ghost" href="https://instagram.com" target="_blank" rel="noreferrer">@asher_official</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      © 2026 ASHER. All Rights Reserved. Built with HTML, CSS & JavaScript.
+    </div>
+  </footer>
+
+  <div class="hidden-egg">Easter egg: press A S H E R</div>
+  <div class="toast" id="toast">ASHER Easter Egg Found ✦</div>
+
+  <script>
+    const body = document.body;
+    const themeBtn = document.getElementById('themeBtn');
+    const menuBtn = document.getElementById('menuBtn');
+    const navLinks = document.getElementById('navLinks');
+    const toast = document.getElementById('toast');
+
+    themeBtn.addEventListener('click', () => {
+      body.classList.toggle('dark');
+      themeBtn.textContent = body.classList.contains('dark') ? 'Light' : 'Dark';
+      localStorage.setItem('asher-theme', body.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    if (localStorage.getItem('asher-theme') === 'dark') {
+      body.classList.add('dark');
+      themeBtn.textContent = 'Light';
+    }
+
+    menuBtn.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+    });
+
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => navLinks.classList.remove('open'));
+    });
+
+    document.querySelectorAll('.portfolio').forEach(card => {
+      card.addEventListener('click', () => {
+        showToast(card.dataset.work);
+      });
+    });
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2300);
+    }
+
+    let typed = '';
+    window.addEventListener('keydown', event => {
+      typed += event.key.toLowerCase();
+      typed = typed.slice(-5);
+      if (typed === 'asher') {
+        showToast('Hidden code unlocked: ASHER ✦');
+        document.querySelector('.orb').style.filter = 'hue-rotate(140deg) saturate(1.4)';
+      }
+    });
+  </script>
+</body>
+</html>
